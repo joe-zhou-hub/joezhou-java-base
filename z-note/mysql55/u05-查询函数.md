@@ -1,0 +1,148 @@
+# 1. 去重函数
+
+**概念：** `DISTINCT()` 可以对单列字段去重复，但是效率比较低，建议使用EXISTS替代。
+- 格式：`DISTINCT(JOB)`：对JOB字段去重展示。
+- 变体：`DISTINCT JOB`：对JOB字段去重展示。
+
+**源码：** function/去重函数.sql
+
+# 2. 范围函数
+
+**概念：** `IN()` 和 `BETWEEN AND` 可以对条件进行范围筛选：
+- `IN(n...)`：字段的值只要出现在这个集合中就返回true。
+- `NOT IN(n...)`：字段的值只要没出现在这个集合中就返回true。
+- `BETWEEN x AND y`：字段的值只要在x与y之间返回true。
+    - 包括x也包括y。
+- `NOT BETWEEN x AND y`：字段的值只要不在x与y之间返回true。
+    - 不包括x也不包括y。
+
+**源码：** function/范围函数.sql
+
+# 3. 时间函数
+
+**概念：** DUAL是一张虚拟的表，这个表可以提供一些函数的基本测试，但是在mysql中可以省略它。
+- `NOW()`：获取当前系统时间，包括年月日时分秒。
+- `CURDATE()`：获取当前系统时间中的"年月日"部分。
+- `CURTIME()`：获取当前系统时间中的"时分秒"部分
+- `DATE_ADD(date, INTERVAL n day)`：在date上添加n天并返回：
+    - param1：待操作日期，mysql中字符串可以自动转为date格式。
+    - param2：添加数值，要求是一个正整数。
+    - param3：数量单位：
+        - year，month，day，week，hour，second，minute，microsecond，quarter。
+        - year_month，day_hour，day_minute，day_second，day_microsecond。
+        - hour_minute，hour_second，hour_microsecond。
+        - minute_second，minute_microsecond，second_microsecond。
+- `DATE_SUB(date, INTERVAL n day)`：在date上减少n天并返回：
+    - param1：待操作日期，mysql中字符串可以自动转为date格式。
+    - param2：减少数值，要求是一个正整数。
+    - param3：数量单位：同 `DATE_ADD()`。
+- `DATEDIFF(date1, date2)`：返回两个日期相差的天数，即date1减去date2的值。
+- `EXTRACT(year FROM date)`：从date中截取出想要的部分：
+    - param1：想要的部分：
+        - year，month，day，week，hour，second，minute，microsecond，quarter。
+        - year_month，day_hour，day_minute，day_second，day_microsecond。
+        - hour_minute，hour_second，hour_microsecond。
+        - minute_second，minute_microsecond，second_microsecond。
+    - param2：待操作日期，mysql中字符串可以自动转为date格式。
+    - 也可以直接使用 `YEAR()` 或 `MONTH()` 等来进行截取。
+- `LAST_DAY(date)`：查询date所在月的最后一天。
+- `DATE_FORMAT(date, format)`：按照format格式化date，最终返回一个字符串，模板见图：
+
+> 日期格式化模板图
+
+**源码：** function/时间函数.sql
+
+# 4. 字符函数
+
+**概念：** 字符函数是对字符型数据提供的一些快速操作的封装函数：
+- `LENGTH(str)`：返回str所包含的字节数。
+    - 如果是UTF8编码：一个汉字3个字节。
+    - 如果是GBK编码：一个汉字2个字节。
+- `LOWER(str)`：将str强制转小写，同 `LCASE(str)`。
+- `UPPER(str)`：将str强制转大写，同 `UCASE(str)`。
+- `TRIM(str)`：对str两端去空格：
+    - `LTRIM(str)`：对str左端去空格。
+    - `RTRIM(str)`：对str右端去空格。
+    - `TRIM(c FROM str)`：对str两端去c，c必须是一个字符。
+- `LPAD(str, n, strB)`：对str左补齐至n位，用strB补，如果str长度大于n则截取到n。
+- `RPAD(str, n, strB)`：对str右补齐至n位，用strB补，如果str长度大于n则截取到n。
+- `ASCII(c)`：返回字符c的ASCII码值：
+    - 如果是字符串，那么会返回第一个字符的ASCII码值。
+    - 如果是参数是空串返回0。
+    - 如果参数是是NULL，返回NULL。
+- `CHAR(n, m, ...)`：返回对应为值的ASCII字符拼成的字符串。
+    - 参数为NULL时会被忽略。
+- `REPLACE(str, strA, strB)`：将str中的strA替换成strB。
+    - 若省略strB，则表示从str中删除strA。
+- `CONCAT(strA, strB...)`：将多个字符串拼接到一起。
+    - 数字默认转化成字符串进行拼接。
+    - 如有任何一个参数为NULL，则返回值为NULL。
+- `CONCAT_WS(S0, strA, strB...)`：可以按照指定的分隔符S0将多个字符串拼接到一起。
+    - 如果连接符为NULL，则结果为NULL。
+- `REPEAT(str, n)`：将str自拼接N次后返回：
+    - 两个参数有一个为NULL，结果都为NULL。
+    - n如果是一个负数则最终返回一个空串。
+- `POSITION(strA IN strB)`：返回strA在strB中第一次出现的位置：
+    - mysql的索引是从1开始的，如果没有找到返回的是0。
+    - 可以使用 `INSTR(strB, strA)` 替换。
+- `LEFT(str, n)`：返回str的最左面n个字符。
+- `RIGHT(str, n)`：返回str的最右面n个字符。
+- `SUBSTRING(str, n, m)`：在str中，从第n（包括n）个字符开始向后截取m个字符。
+    - `SUBSTRING(str FROM n)`：从第n个字节开始截取（包括n）。
+    - `SUBSTRING(str, n)`：从第n个字节开始截取（包括n）。
+- `SPACE(n)`：返回由n个空格字符组成的一个字符串。
+- `REVERSE(str)`：将str颠倒字符顺序并返回。
+- `INSERT(strA, n, m, strB)`：在strA中，从n位置开始（包括n），删除m个，并插入strB。
+- `ELT(n, strA, strB, ...)`：如果n是1，返回strA，如n是2，返回strB...如果没找到，返回NULL。
+- `FIELD(str, strA, strB, ...)`：返回strA在其后所有参数列表中的位置，如果没有返回0。
+
+**源码：** function/字符函数.sql
+
+# 5. 数学函数
+
+**概念：** 数学函数是对数值型数据提供的一些快速计算的封装函数：
+- `ABS(n)`：返回n的绝对值。
+- `CEIL(n)`：对n向上取整。
+- `FLOOR(n)`：对n向下取整。
+- `POWER(n, m)`：返回n的m次幂。
+- `MOD(n, m)`：返回n除以m的余数。
+- `SIGN(n)`：n如果大于0则返回1，等于0则返回0，小于0则返回-1。
+- `ROUND(n, m)`：对n进行四舍五入，小数保留m位：
+    - 先按照绝对值四舍五入，然后再拼接原本的正负符号。
+- `GREATEST(n...)`：返回集合中最大的值。
+- `LEAST(n...)`：返回集合中最小的值。
+
+**源码：** function/数学函数.sql
+
+# 6. 聚合函数
+
+**概念：** 聚合函数一般配合分组查询一同使用：
+- 常用聚合函数：
+    - `COUNT(字段)`：返回指定结果集的总条目数。
+    - `MAX(字段)`：返回某一列中最大的值。
+    - `MIN(字段)`：返回某一列中最小的值。
+    - `SUM(字段)`：返回某一数字列的总和。
+    - `AVG(字段)`：返回某一数字列的平均值。
+- 聚合条件HAVING：如想要找平均工资高于1600的所有部门编号：
+    - WHERE代表查询一条数据，执行一次条件过滤。
+    - HAVING代表每分完一组，执行一次条件过滤。
+    - 所以只要记住，进行聚合函数条件过滤，就用HAVING。
+
+> MYSQL的聚合函数不会忽略NULL值，需要自行处理。
+
+**源码：** function/聚合函数.sql
+
+# 7. 条件函数
+
+**概念：** MYSQL支持多种条件判断：
+- `CASE WHEN 条件 THEN 响应 END`：相当于java中的Switch结构。
+- `IFNULL(column，a)`：如果字段为null，则替换成a。
+- `IF(column，a, b)`：如果字段为null，则替换成b，否则替换成a。
+- `IF(condition，a，b)` ：如果条件成立，输出a，否则输出b。 
+
+> `IF()` 可以嵌套使用。
+
+**源码：** function/条件函数.sql
+
+
+

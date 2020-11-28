@@ -1,0 +1,2 @@
+className=com.joezhou.reflect.Teacher
+methodName=teacherInfo

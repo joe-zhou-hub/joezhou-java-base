@@ -1,0 +1,25 @@
+DROP TABLE IF EXISTS `STUDENT`;
+CREATE TABLE `STUDENT`
+(
+    `ID`       INT,
+    `NAME`     VARCHAR(50) NOT NULL,
+    `GENDER`   INT,
+    `AGE`      INT,
+    `INFO`     VARCHAR(100),
+    `CLASS_ID` INT,
+    PRIMARY KEY (ID),
+    UNIQUE (NAME),
+    FOREIGN KEY (CLASS_ID) REFERENCES CLASS (ID)
+) ENGINE = INNODB
+  DEFAULT CHARSET = UTF8MB4;
+
+INSERT INTO `STUDENT`
+VALUES (1, '赵四', 1, 50, '亚洲舞王', 1),
+       (2, '刘能', 1, 52, '58同镇', 2),
+       (3, '广坤', 1, 54, '山货', 3),
+       (4, '大脚', 2, 55, '大脚超市', 4);
+COMMIT;
+
+CREATE INDEX I_U_GENDER ON `STUDENT` (GENDER);
+
+SHOW INDEX FROM `STUDENT`;
