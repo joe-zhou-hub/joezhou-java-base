@@ -11,6 +11,7 @@ import java.util.Date;
  * @author JoeZhou
  */
 public class CalendarTest {
+
     @Test
     public void calendarApi() {
         Calendar calendar = Calendar.getInstance();
@@ -35,4 +36,5 @@ public class CalendarTest {
         System.out.printf("%d-%d-%d 星期%d %d:%d:%s",
                 year, month + 1, date, week + 1, hour, minute, second);
     }
+
 }
