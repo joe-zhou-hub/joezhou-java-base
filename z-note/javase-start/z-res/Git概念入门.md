@@ -94,6 +94,7 @@
     - 查询 `github.global.ssl.fastly.net` 复制TTL最快的。
     - 添加在 `C:\Windows\System32\drivers\etc\` 中的hosts文件末尾，如下：
     - 如果权限不够，点击host文件，右键属性-安全-编辑-选中当前登录的账号，对其勾选完全控制。
+    - `ipconfig /flushdns`：刷新DNS配置。
 
 ```txt
 140.82.113.3 github.com
